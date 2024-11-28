@@ -1,7 +1,5 @@
-.git*
-.vscode
-__azurite_db*__.json
-__blobstorage__
-__queuestorage__
+.git/
+.vscode/
+.env
 local.settings.json
-test
+test/
