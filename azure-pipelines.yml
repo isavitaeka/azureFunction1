@@ -108,7 +108,7 @@ steps:
         </html>
         """
 
-        return html_report
+      return html_report
 
     # Function to read JSON data from a file and generate HTML report
     def generate_report_from_file(json_file_path, output_html_path):
@@ -125,8 +125,7 @@ steps:
     generate_report_from_file(input_file, output_html_file)
 
     EOF
-    displayName: 'Generate Readable Report'
-    continueOnError: true
+  displayName: 'Generate Readable Report'
 
 # Archive files
 - task: ArchiveFiles@2
