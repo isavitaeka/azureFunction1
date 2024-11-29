@@ -165,6 +165,6 @@ steps:
 # Publish readable report
 - task: PublishBuildArtifacts@1
   inputs:
-    pathtoPublish: 'readable_report.txt'
+    pathtoPublish: 'output_html_file'
     artifactName: 'trufflehog-report.txt'
     publishLocation: 'Container'
