@@ -107,8 +107,7 @@ steps:
         </body>
         </html>
         """
-
-      return html_report
+        return html_report
 
     # Function to read JSON data from a file and generate HTML report
     def generate_report_from_file(json_file_path, output_html_path):
