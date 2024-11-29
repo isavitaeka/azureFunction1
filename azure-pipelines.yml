@@ -33,7 +33,7 @@ steps:
 - bash: |
     pip install truffleHog
     #trufflehog git --repo_path=repo --json > trufflehog-report.json
-    trufflehog scan
+    trufflehog filesystem --path . --regex --entropy=False > scan_results.txt
   displayName: 'Run secret scanning'
   continueOnError: true
 
