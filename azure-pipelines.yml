@@ -30,11 +30,10 @@ steps:
 
 
 # Run secret scanning
-- bash: |
-    pip install truffleHog
-    #trufflehog git --repo_path=repo --json > trufflehog-report.json
-    trufflehog filesystem --path . --regex --entropy=False > scan_results.txt
-  displayName: 'Run secret scanning'
+- script: |
+    git_url=$(git config --get remote.origin.url)  # Get the repo URL
+    trufflehog --json --regex $git_url > scan_results.json
+  displayName: 'Run truffleHog Scan'
   continueOnError: true
 
 # Archive files
