@@ -25,7 +25,6 @@ def GetDetails(req: func.HttpRequest) -> func.HttpResponse:
         except ValueError:
             pass
         else:
-    if not job:
             name = req_body.get('name')
 
     if name:
