@@ -16,7 +16,7 @@ steps:
 
 # Run linting and generate report
 - bash: |
-    pip install flake8
+    pip install flake8 flake8-html
     flake8 . --format=html --htmldir=flake8-report
   displayName: 'Run linting and generate report'
 
