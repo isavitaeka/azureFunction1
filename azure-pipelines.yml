@@ -62,59 +62,69 @@ steps:
     output_text_file = "${{ variables.TRUFFLEHOG_READABLE_REPORT }}"
     output_html_file = "${{ variables.TRUFFLEHOG_HTML_REPORT }}"
 
-    try:
-        # Read the JSON file
-        with open(input_file, 'r') as file:
-            data = json.load(file)  # Load JSON as a list of findings
+import json
 
-        # Extract issues
-        issues = [
-            {
-                'file': result.get('SourceMetadata', {}).get('Filename', 'Unknown'),
-                'secret': result.get('SourceMetadata', {}).get('Secret', 'Unknown'),
-                'type': result.get('Rule', 'Unknown')
-            }
-            for result in data  # Iterate over the list directly
-            if result.get('SourceMetadata', {}).get('Found', False)
-        ]
+def generate_html_report(data):
+    html_report = """
+    <!DOCTYPE html>
+    <html>
+    <head>
+        <title>Branch Commit Report</title>
+        <style>
+            body {font-family: Arial, sans-serif; margin: 20px;}
+            table {border-collapse: collapse; width: 100%;}
+            th, td {border: 1px solid #dddddd; text-align: left; padding: 8px;}
+            th {background-color: #f2f2f2;}
+        </style>
+    </head>
+    <body>
+        <h2>Branch Commit Report</h2>
+        <table>
+            <tr>
+                <th>Branch</th>
+                <th>Commit</th>
+                <th>Commit Hash</th>
+                <th>Date</th>
+                <th>Path</th>
+                <th>Reason</th>
+                <th>Strings Found</th>
+            </tr>"""
 
-        # Generate a readable text report
-        with open(output_text_file, 'w') as report:
-            if issues:
-                report.write("TruffleHog Scan Report - Issues Found\n")
-                report.write("=" * 40 + "\n")
-                for idx, issue in enumerate(issues, 1):
-                    report.write(f"Issue #{idx}\n")
-                    report.write(f"File: {issue['file']}\n")
-                    report.write(f"Secret: {issue['secret']}\n")
-                    report.write(f"Type: {issue['type']}\n")
-                    report.write("-" * 40 + "\n")
-            else:
-                report.write("No issues found.\n")
+    for entry in data:
+        html_report += f"""
+            <tr>
+                <td>{entry['branch']}</td>
+                <td>{entry['commit']}</td>
+                <td>{entry['commitHash']}</td>
+                <td>{entry['date']}</td>
+                <td>{entry['path']}</td>
+                <td>{entry['reason']}</td>
+                <td><ul>"""
+        for string in entry['stringsFound']:
+            html_report += f"<li>{string}</li>"
+        html_report += "</ul></td></tr>"
 
-        # Generate an HTML report
-        with open(output_html_file, 'w') as html_report:
-            html_report.write("<html><head><title>TruffleHog Scan Report</title></head><body>")
-            html_report.write("<h1>TruffleHog Scan Report</h1>")
-            if issues:
-                for idx, issue in enumerate(issues, 1):
-                    html_report.write(f"<h2>Issue #{idx}</h2>")
-                    html_report.write(f"<p><strong>File:</strong> {issue['file']}</p>")
-                    html_report.write(f"<p><strong>Secret:</strong> {issue['secret']}</p>")
-                    html_report.write(f"<p><strong>Type:</strong> {issue['type']}</p>")
-                    html_report.write("<hr>")
-            else:
-                html_report.write("<p>No issues found.</p>")
-            html_report.write("</body></html>")
+    html_report += """
+        </table>
+    </body>
+    </html>
+    """
 
-    except Exception as e:
-        # Handle any unexpected errors
-        with open(output_text_file, 'w') as report:
-            report.write("An error occurred while generating the report:\n")
-            report.write(str(e))
-        with open(output_html_file, 'w') as html_report:
-            html_report.write("<html><body><h1>Error</h1>")
-            html_report.write(f"<p>{str(e)}</p></body></html>")
+    return html_report
+
+# Function to read JSON data from a file and generate HTML report
+def generate_report_from_file(json_file_path, output_html_path):
+    with open(json_file_path, 'r') as file:
+        data = json.load(file)
+    
+    html_report = generate_html_report(data)
+    
+    with open(output_html_path, 'w') as file:
+        file.write(html_report)
+
+    print(f"HTML report has been generated and saved as '{output_html_path}'.")
+
+generate_report_from_file(input_file, output_html_file)
 
     EOF
   displayName: 'Generate Readable Report'
