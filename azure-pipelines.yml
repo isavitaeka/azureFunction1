@@ -168,10 +168,3 @@ steps:
     pathtoPublish: 'readable_report.html'
     artifactName: 'trufflehog-report'
     publishLocation: 'Container'
-
-# Publish readable report
-- task: PublishBuildArtifacts@1
-  inputs:
-    pathtoPublish: 'readable_report.txt'
-    artifactName: 'trufflehog-report'
-    publishLocation: 'Container'
