@@ -4,6 +4,10 @@ trigger:
 pool:
   vmImage: 'ubuntu-latest'
 
+variables:
+  TRUFFLEHOG_JSON_REPORT: 'scan_results.json'
+  TRUFFLEHOG_READABLE_REPORT: 'readable_report.txt'
+  TRUFFLEHOG_HTML_REPORT: 'readable_report.html'
 steps:
 - task: UsePythonVersion@0
   inputs:
@@ -37,11 +41,64 @@ steps:
 # Step 3: Run truffleHog Scan on the Repository with Authentication
 - script: |
     export GIT_URL="https://$(AZURE_DEVOPS_PAT)@dev.azure.com/isavitaeka/eShopOnWeb/_git/AzureFunction"
-    trufflehog --json --regex $GIT_URL > scan_results.json
+    trufflehog --json --regex $GIT_URL >  $(TRUFFLEHOG_JSON_REPORT)
   displayName: 'Run truffleHog Scan'
   env:
     AZURE_DEVOPS_PAT: $(AZURE_DEVOPS_PAT)  # Inject the PAT securely
   continueOnError: true
+
+
+# Step 4: Generate a Readable Report
+- script: |
+    python - <<EOF
+    import json
+
+
+    with open('${{ variables.TRUFFLEHOG_JSON_REPORT  }}', 'r') as file:
+        data = json.load(file)
+
+    # Extract issues
+    issues = [
+        {
+            'file': result['SourceMetadata']['Filename'],
+            'secret': result['SourceMetadata']['Secret'],
+            'type': result.get('Rule', 'Unknown')
+        }
+        for result in data['results']
+        if result['SourceMetadata']['Found']
+    ]
+
+    # Generate a readable text report
+    with open('${{ variables.TRUFFLEHOG_READABLE_REPORT }}', 'w') as report:
+        if issues:
+            report.write("TruffleHog Scan Report - Issues Found\n")
+            report.write("=" * 40 + "\n")
+            for idx, issue in enumerate(issues, 1):
+                report.write(f"Issue #{idx}\n")
+                report.write(f"File: {issue['file']}\n")
+                report.write(f"Secret: {issue['secret']}\n")
+                report.write(f"Type: {issue['type']}\n")
+                report.write("-" * 40 + "\n")
+        else:
+            report.write("No issues found.\n")
+
+    # Generate an HTML report
+    with open('${{ variables.TRUFFLEHOG_HTML_REPORT }}', 'w') as html_report:
+        html_report.write("<html><head><title>TruffleHog Scan Report</title></head><body>")
+        html_report.write("<h1>TruffleHog Scan Report</h1>")
+        if issues:
+            for idx, issue in enumerate(issues, 1):
+                html_report.write(f"<h2>Issue #{idx}</h2>")
+                html_report.write(f"<p><strong>File:</strong> {issue['file']}</p>")
+                html_report.write(f"<p><strong>Secret:</strong> {issue['secret']}</p>")
+                html_report.write(f"<p><strong>Type:</strong> {issue['type']}</p>")
+                html_report.write("<hr>")
+        else:
+            html_report.write("<p>No issues found.</p>")
+        html_report.write("</body></html>")
+    EOF
+  displayName: 'Generate Readable Report'
+
 
 # Archive files
 - task: ArchiveFiles@2
@@ -71,6 +128,8 @@ steps:
     pathtoPublish: 'bandit-report.html'
     artifactName: 'bandit-report'
     publishLocation: 'Container'
+
+
 
 # Publish secret scanning report
 - task: PublishBuildArtifacts@1
