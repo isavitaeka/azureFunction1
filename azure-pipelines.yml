@@ -14,17 +14,17 @@ steps:
     pip install --target="./.python_packages/lib/site-packages" -r ./requirements.txt
   displayName: 'Install dependencies'
 
-# Run linting
+# Run linting and generate report
 - bash: |
     pip install flake8
-    flake8 .
-  displayName: 'Run linting'
+    flake8 . --format=html --htmldir=flake8-report
+  displayName: 'Run linting and generate report'
 
-# Run static analysis
+# Run static analysis and generate report
 - bash: |
     pip install bandit
-    bandit -r .
-  displayName: 'Run static analysis'
+    bandit -r . -f html -o bandit-report.html
+  displayName: 'Run static analysis and generate report'
 
 # Archive files
 - task: ArchiveFiles@2
@@ -39,4 +39,18 @@ steps:
   inputs:
     pathtoPublish: '$(Build.ArtifactStagingDirectory)/$(Build.BuildId).zip'
     artifactName: 'drop'
+    publishLocation: 'Container'
+
+# Publish linting report
+- task: PublishBuildArtifacts@1
+  inputs:
+    pathtoPublish: 'flake8-report'
+    artifactName: 'flake8-report'
+    publishLocation: 'Container'
+
+# Publish static analysis report
+- task: PublishBuildArtifacts@1
+  inputs:
+    pathtoPublish: 'bandit-report.html'
+    artifactName: 'bandit-report'
     publishLocation: 'Container'
