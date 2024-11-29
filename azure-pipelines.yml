@@ -28,15 +28,12 @@ steps:
   displayName: 'Run static analysis and generate report'
   continueOnError: true
 
-# Clone repository for secret scanning
-- bash: |
-    git clone $(Build.Repository.Uri) repo
-  displayName: 'Clone repository'
 
 # Run secret scanning
 - bash: |
     pip install truffleHog
-    trufflehog git --repo_path=repo --json > trufflehog-report.json
+    #trufflehog git --repo_path=repo --json > trufflehog-report.json
+    trufflehog scan
   displayName: 'Run secret scanning'
   continueOnError: true
 
