@@ -1,9 +1,9 @@
 import azure.functions as func
 import logging
-
+MONGO_URI = "mongodb://autocomppoc:fqX5VFRG7VF9LJ0TgvWMGPGyNwLJQmNVrT3qiNks1iZSjJdbMVFJvnOVYLqw1C76xtdi7eS6gdvfACDbStHCVg==@autocomppoc.mongo.cosmos.azure.com:10255/?ssl=true&replicaSet=globaldb&retrywrites=false&maxIdleTimeMS=120000&appName=@autocomppoc@"
 app = func.FunctionApp(http_auth_level=func.AuthLevel.FUNCTION)
 user = "savita"
-password = "ajdhfdhfjhdsfj!"
+password = "fqX5VFRG7VF9LJ0TgvWMGPGyNwLJQmNVrT3qiNks1iZSjJdbMVFJvnOVYLqw1C76xtdi7eS6gdvfACDbStHCVg!"
 @app.route(route="GetDetails")
 def GetDetails(req: func.HttpRequest) -> func.HttpResponse:
     logging.info('Python HTTP trigger function processed a request.')
