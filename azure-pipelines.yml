@@ -126,6 +126,7 @@ steps:
 
     EOF
     displayName: 'Generate Readable Report'
+    continueOnError: true
 
 # Archive files
 - task: ArchiveFiles@2
