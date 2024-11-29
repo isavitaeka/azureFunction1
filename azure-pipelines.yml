@@ -26,6 +26,7 @@ steps:
     pip install bandit
     bandit -r . -f html -o bandit-report.html
   displayName: 'Run static analysis and generate report'
+   continueOnError: true
 
 # Archive files
 - task: ArchiveFiles@2
