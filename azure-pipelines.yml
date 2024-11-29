@@ -31,7 +31,7 @@ steps:
 # Run secret scanning
 - bash: |
     pip install truffleHog
-    trufflehog filesystem --json . > trufflehog-report.json
+    trufflehog filesystem --json repo > trufflehog-report.json
   displayName: 'Run secret scanning'
   continueOnError: true
 
