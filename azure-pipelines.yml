@@ -34,11 +34,13 @@ steps:
     pip install truffleHog
   displayName: 'Install truffleHog'
 
-# Run secret scanning
+# Step 3: Run truffleHog Scan on the Repository with Authentication
 - script: |
-    git_url=$(git config --get remote.origin.url)  # Get the repo URL
-    trufflehog --json --regex $git_url > scan_results.json
+    export GIT_URL="https://$(AZURE_DEVOPS_PAT)@dev.azure.com/isavitaeka/eShopOnWeb/_git/AzureFunction"
+    trufflehog --json --regex $GIT_URL > scan_results.json
   displayName: 'Run truffleHog Scan'
+  env:
+    AZURE_DEVOPS_PAT: $(AZURE_DEVOPS_PAT)  # Inject the PAT securely
   continueOnError: true
 
 # Archive files
