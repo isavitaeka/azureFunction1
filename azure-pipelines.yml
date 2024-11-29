@@ -75,6 +75,6 @@ steps:
 # Publish secret scanning report
 - task: PublishBuildArtifacts@1
   inputs:
-    pathtoPublish: 'trufflehog-report.json'
+    pathtoPublish: 'scan_results.json'
     artifactName: 'trufflehog-report'
     publishLocation: 'Container'
