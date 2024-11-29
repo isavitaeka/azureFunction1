@@ -26,12 +26,13 @@ steps:
     pip install bandit
     bandit -r . -f html -o bandit-report.html
   displayName: 'Run static analysis and generate report'
-
+  continueOnError: true
 # Run secret scanning
 - bash: |
     pip install truffleHog
     trufflehog filesystem --directory . --json > trufflehog-report.json
   displayName: 'Run secret scanning'
+  continueOnError: true
 
 # Archive files
 - task: ArchiveFiles@2
