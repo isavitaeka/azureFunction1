@@ -2,7 +2,8 @@ import azure.functions as func
 import logging
 
 app = func.FunctionApp(http_auth_level=func.AuthLevel.FUNCTION)
-
+user = "savita"
+password = "ajdhfdhfjhdsfj!"
 @app.route(route="GetDetails")
 def GetDetails(req: func.HttpRequest) -> func.HttpResponse:
     logging.info('Python HTTP trigger function processed a request.')
