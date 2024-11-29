@@ -62,69 +62,67 @@ steps:
     output_text_file = "${{ variables.TRUFFLEHOG_READABLE_REPORT }}"
     output_html_file = "${{ variables.TRUFFLEHOG_HTML_REPORT }}"
 
-import json
+    def generate_html_report(data):
+        html_report = """
+        <!DOCTYPE html>
+        <html>
+        <head>
+            <title>Branch Commit Report</title>
+            <style>
+                body {font-family: Arial, sans-serif; margin: 20px;}
+                table {border-collapse: collapse; width: 100%;}
+                th, td {border: 1px solid #dddddd; text-align: left; padding: 8px;}
+                th {background-color: #f2f2f2;}
+            </style>
+        </head>
+        <body>
+            <h2>Branch Commit Report</h2>
+            <table>
+                <tr>
+                    <th>Branch</th>
+                    <th>Commit</th>
+                    <th>Commit Hash</th>
+                    <th>Date</th>
+                    <th>Path</th>
+                    <th>Reason</th>
+                    <th>Strings Found</th>
+                </tr>"""
 
-def generate_html_report(data):
-    html_report = """
-    <!DOCTYPE html>
-    <html>
-    <head>
-        <title>Branch Commit Report</title>
-        <style>
-            body {font-family: Arial, sans-serif; margin: 20px;}
-            table {border-collapse: collapse; width: 100%;}
-            th, td {border: 1px solid #dddddd; text-align: left; padding: 8px;}
-            th {background-color: #f2f2f2;}
-        </style>
-    </head>
-    <body>
-        <h2>Branch Commit Report</h2>
-        <table>
-            <tr>
-                <th>Branch</th>
-                <th>Commit</th>
-                <th>Commit Hash</th>
-                <th>Date</th>
-                <th>Path</th>
-                <th>Reason</th>
-                <th>Strings Found</th>
-            </tr>"""
+        for entry in data:
+            html_report += f"""
+                <tr>
+                    <td>{entry['branch']}</td>
+                    <td>{entry['commit']}</td>
+                    <td>{entry['commitHash']}</td>
+                    <td>{entry['date']}</td>
+                    <td>{entry['path']}</td>
+                    <td>{entry['reason']}</td>
+                    <td><ul>"""
+            for string in entry['stringsFound']:
+                html_report += f"<li>{string}</li>"
+            html_report += "</ul></td></tr>"
 
-    for entry in data:
-        html_report += f"""
-            <tr>
-                <td>{entry['branch']}</td>
-                <td>{entry['commit']}</td>
-                <td>{entry['commitHash']}</td>
-                <td>{entry['date']}</td>
-                <td>{entry['path']}</td>
-                <td>{entry['reason']}</td>
-                <td><ul>"""
-        for string in entry['stringsFound']:
-            html_report += f"<li>{string}</li>"
-        html_report += "</ul></td></tr>"
+        html_report += """
+            </table>
+        </body>
+        </html>
+        ""
 
-    html_report += """
-        </table>
-    </body>
-    </html>
-    """
+        return html_report
 
-    return html_report
+    # Function to read JSON data from a file and generate HTML report
+    def generate_report_from_file(json_file_path, output_html_path):
+        with open(json_file_path, 'r') as file:
+            data = json.load(file)
+        
+        html_report = generate_html_report(data)
+        
+        with open(output_html_path, 'w') as file:
+            file.write(html_report)
 
-# Function to read JSON data from a file and generate HTML report
-def generate_report_from_file(json_file_path, output_html_path):
-    with open(json_file_path, 'r') as file:
-        data = json.load(file)
-    
-    html_report = generate_html_report(data)
-    
-    with open(output_html_path, 'w') as file:
-        file.write(html_report)
+        print(f"HTML report has been generated and saved as '{output_html_path}'.")
 
-    print(f"HTML report has been generated and saved as '{output_html_path}'.")
-
-generate_report_from_file(input_file, output_html_file)
+    generate_report_from_file(input_file, output_html_file)
 
     EOF
   displayName: 'Generate Readable Report'
