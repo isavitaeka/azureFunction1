@@ -8,6 +8,7 @@ variables:
   TRUFFLEHOG_JSON_REPORT: 'scan_results.json'
   TRUFFLEHOG_READABLE_REPORT: 'readable_report.txt'
   TRUFFLEHOG_HTML_REPORT: 'readable_report.html'
+
 steps:
 - task: UsePythonVersion@0
   inputs:
@@ -41,7 +42,7 @@ steps:
 # Step 3: Run truffleHog Scan on the Repository with Authentication
 - script: |
     export GIT_URL="https://$(AZURE_DEVOPS_PAT)@dev.azure.com/isavitaeka/eShopOnWeb/_git/AzureFunction"
-    trufflehog --json --regex $GIT_URL >   raw_scan_results.json
+    trufflehog --json --regex $GIT_URL > raw_scan_results.json
     # Convert line-delimited JSON into a valid JSON array
     echo "[" > $(TRUFFLEHOG_JSON_REPORT)
     sed 's/^/  /' raw_scan_results.json | sed '$!s/$/,/' >> $(TRUFFLEHOG_JSON_REPORT)
@@ -50,7 +51,6 @@ steps:
   env:
     AZURE_DEVOPS_PAT: $(AZURE_DEVOPS_PAT)  # Inject the PAT securely
   continueOnError: true
-
 
 # Step 4: Generate a Readable Report
 - script: |
@@ -100,13 +100,13 @@ steps:
                     <td><ul>"""
             for string in entry['stringsFound']:
                 html_report += f"<li>{string}</li>"
-            html_report += "</ul></td></tr>"
+            html_report += "</ul></td></tr>"""
 
         html_report += """
             </table>
         </body>
         </html>
-        ""
+        """
 
         return html_report
 
@@ -125,8 +125,7 @@ steps:
     generate_report_from_file(input_file, output_html_file)
 
     EOF
-  displayName: 'Generate Readable Report'
-
+    displayName: 'Generate Readable Report'
 
 # Archive files
 - task: ArchiveFiles@2
@@ -157,8 +156,6 @@ steps:
     artifactName: 'bandit-report'
     publishLocation: 'Container'
 
-
-
 # Publish secret scanning report
 - task: PublishBuildArtifacts@1
   inputs:
@@ -166,7 +163,7 @@ steps:
     artifactName: 'trufflehog-report'
     publishLocation: 'Container'
 
-# Publish secret scanning report
+# Publish readable report
 - task: PublishBuildArtifacts@1
   inputs:
     pathtoPublish: 'readable_report.txt'
