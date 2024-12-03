@@ -149,21 +149,21 @@ steps:
     publishLocation: 'Container'
 
 # Publish linting report
-- task: PublishBuildArtifacts@1
+- task: PublishFlakeArtifacts@1
   inputs:
     pathtoPublish: 'flake8-report'
     artifactName: 'flake8-report'
     publishLocation: 'Container'
 
 # Publish static analysis report
-- task: PublishBuildArtifacts@1
+- task: PublishBanditArtifacts@1
   inputs:
     pathtoPublish: 'bandit-report.html'
     artifactName: 'bandit-report'
     publishLocation: 'Container'
 
 # Publish secret scanning report
-- task: PublishBuildArtifacts@1
+- task: PublishTruffleAhogrtifacts@1
   inputs:
     pathtoPublish: 'scan_results.json'
     artifactName: 'trufflehog-report'
