@@ -126,6 +126,12 @@ steps:
     EOF
   displayName: 'Generate Readable Report'
 
+# Run unit tests
+- bash: |
+    pip install pytest requests
+    pytest test_function.py --junitxml=test-results.xml
+  displayName: 'Run unit tests'
+
 # Archive files
 - task: ArchiveFiles@2
   inputs:
@@ -168,3 +174,9 @@ steps:
     pathtoPublish: 'readable_report.html'
     artifactName: 'trufflehog-report'
     publishLocation: 'Container'
+
+# Publish test results
+- task: PublishTestResults@2
+  inputs:
+    testResultsFiles: '**/test-results.xml'
+    testRunTitle: 'Python Unit Tests'
