@@ -5,6 +5,9 @@ variables:
   versionMajor: 1
   versionMinor: 0
   versionPatch: 0
+  TRUFFLEHOG_JSON_REPORT: 'scan_results.json'
+  TRUFFLEHOG_READABLE_REPORT: 'readable_report.txt'
+  TRUFFLEHOG_HTML_REPORT: 'readable_report.html'
 
 trigger:
 - main
@@ -12,10 +15,6 @@ trigger:
 pool:
   vmImage: 'ubuntu-latest'
 
-variables:
-  TRUFFLEHOG_JSON_REPORT: 'scan_results.json'
-  TRUFFLEHOG_READABLE_REPORT: 'readable_report.txt'
-  TRUFFLEHOG_HTML_REPORT: 'readable_report.html'
 
 steps:
 - task: UsePythonVersion@0
