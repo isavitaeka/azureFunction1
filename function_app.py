@@ -30,7 +30,7 @@ def GetDetails(req: func.HttpRequest) -> func.HttpResponse:
 
 
     if name:
-        return func.HttpResponse(f"Hello, {name} with job as {job}. This HTTP triggered function executed successfully (In feature Branch).")
+        return func.HttpResponse(f"Hello, {name} with job as {job}. This HTTP triggered function executed successfully (Feature Branch 2, for Testing).")
     else:
         return func.HttpResponse(
              "This HTTP triggered function executed successfully. Pass a name, job and place in the query string or in the request body for a personalized response.",
