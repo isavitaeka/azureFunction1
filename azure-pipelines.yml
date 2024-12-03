@@ -14,6 +14,7 @@ steps:
   inputs:
     versionSpec: '3.9'
     architecture: 'x64'
+  displayName : InstallPython
 
 - bash: |    
     pip install --target="./.python_packages/lib/site-packages" -r ./requirements.txt
@@ -23,21 +24,21 @@ steps:
 - bash: |
     pip install flake8 flake8-html
     flake8 . --format=html --htmldir=flake8-report
-  displayName: 'Run linting and generate report'
+  displayName: 'Run Linting and Generate Report'
   continueOnError: true
 
 # Run static analysis and generate report
 - bash: |
     pip install bandit
     bandit -r . -f html -o bandit-report.html
-  displayName: 'Run static analysis and generate report'
+  displayName: 'Run Code Staic Analysis and Generate Report'
   continueOnError: true
 
 # Step 2: Install truffleHog
 - script: |
     python -m pip install --upgrade pip
     pip install truffleHog
-  displayName: 'Install truffleHog'
+  displayName: 'Install truffleHog for Secret Scanning'
 
 # Step 3: Run truffleHog Scan on the Repository with Authentication
 - script: |
@@ -47,7 +48,7 @@ steps:
     echo "[" > $(TRUFFLEHOG_JSON_REPORT)
     sed 's/^/  /' raw_scan_results.json | sed '$!s/$/,/' >> $(TRUFFLEHOG_JSON_REPORT)
     echo "]" >> $(TRUFFLEHOG_JSON_REPORT)
-  displayName: 'Run truffleHog Scan'
+  displayName: 'Run TruffleHog Scan fo Secrets'
   env:
     AZURE_DEVOPS_PAT: $(AZURE_DEVOPS_PAT)  # Inject the PAT securely
   continueOnError: true
@@ -124,7 +125,7 @@ steps:
     generate_report_from_file(input_file, output_html_file)
 
     EOF
-  displayName: 'Generate Readable Report'
+  displayName: 'Generate Truffle logs Report for Secrets Scan'
 
 # Run unit tests
 - bash: |
@@ -141,12 +142,14 @@ steps:
     archiveType: 'zip'
     archiveFile: '$(Build.ArtifactStagingDirectory)/$(Build.BuildId).zip'
     replaceExistingArchive: true
+  displayName: 'Create Build'
 
 - task: PublishBuildArtifacts@1
   inputs:
     pathtoPublish: '$(Build.ArtifactStagingDirectory)/$(Build.BuildId).zip'
     artifactName: 'drop'
     publishLocation: 'Container'
+  displayName: 'Publish Build'
 
 # Publish linting report
 - task: PublishBuildArtifacts@1
@@ -154,6 +157,7 @@ steps:
     pathtoPublish: 'flake8-report'
     artifactName: 'flake8-report'
     publishLocation: 'Container'
+  displayName: 'Publish Flake Report'
 
 # Publish static analysis report
 - task: PublishBuildArtifacts@1
@@ -161,6 +165,7 @@ steps:
     pathtoPublish: 'bandit-report.html'
     artifactName: 'bandit-report'
     publishLocation: 'Container'
+  displayName: 'Publish Badit Report'
 
 # Publish secret scanning report
 - task: PublishBuildArtifacts@1
@@ -168,6 +173,7 @@ steps:
     pathtoPublish: 'scan_results.json'
     artifactName: 'trufflehog-report'
     publishLocation: 'Container'
+  displayName: 'Publish Trufflehog Report Json'
 
 # Publish readable report
 - task: PublishBuildArtifacts@1
@@ -175,9 +181,11 @@ steps:
     pathtoPublish: 'readable_report.html'
     artifactName: 'trufflehog-report'
     publishLocation: 'Container'
+  displayName: 'Publish Trufflehog Report HTML'
 
 # Publish test results
 - task: PublishTestResults@2
   inputs:
     testResultsFiles: '**/test-results.xml'
     testRunTitle: 'Python Unit Tests'
+  displayName: 'Publish Unit Test Report'
