@@ -131,7 +131,7 @@ steps:
     pip install pytest requests
     pytest test_function.py --junitxml=test-results.xml
   displayName: 'Run unit tests'
-  continueOnError: true
+    continueOnError: true
 
 # Archive files
 - task: ArchiveFiles@2
@@ -149,21 +149,21 @@ steps:
     publishLocation: 'Container'
 
 # Publish linting report
-- task: PublishFlakeArtifacts@1
+- task: PublishBuildArtifacts@1
   inputs:
     pathtoPublish: 'flake8-report'
     artifactName: 'flake8-report'
     publishLocation: 'Container'
 
 # Publish static analysis report
-- task: PublishBanditArtifacts@1
+- task: PublishBuildArtifacts@1
   inputs:
     pathtoPublish: 'bandit-report.html'
     artifactName: 'bandit-report'
     publishLocation: 'Container'
 
 # Publish secret scanning report
-- task: PublishTruffleAhogrtifacts@1
+- task: PublishBuildArtifacts@1
   inputs:
     pathtoPublish: 'scan_results.json'
     artifactName: 'trufflehog-report'
