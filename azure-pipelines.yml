@@ -9,7 +9,7 @@ variables:
   TRUFFLEHOG_JSON_REPORT: 'scan_results.json'
   TRUFFLEHOG_READABLE_REPORT: 'readable_report.txt'
   TRUFFLEHOG_HTML_REPORT: 'readable_report.html'
-  buildNumber : $(name)
+  #buildNumber : $(name)
 
 trigger:
 - main
@@ -149,15 +149,15 @@ steps:
     rootFolderOrFile: '$(Build.Repository.LocalPath)'
     includeRootFolder: false
     archiveType: 'zip'
-    #archiveFile: '$(Build.ArtifactStagingDirectory)/$(Build.BuildId).zip'
-    archiveFile : '$(Build.ArtifactStagingDirectory)/$buildNumber).zip'
+    archiveFile: '$(Build.ArtifactStagingDirectory)/$(Build.BuildId).zip'
+    #archiveFile : '$(Build.ArtifactStagingDirectory)/$buildNumber).zip'
     replaceExistingArchive: true
   displayName: 'Create Build'
 
 - task: PublishBuildArtifacts@1
   inputs:
-    #pathtoPublish: '$(Build.ArtifactStagingDirectory)/$(Build.BuildId).zip'
-    pathtoPublish : '$(Build.ArtifactStagingDirectory)/$buildNumber).zip'
+    pathtoPublish: '$(Build.ArtifactStagingDirectory)/$(Build.BuildId).zip'
+    #pathtoPublish : '$(Build.ArtifactStagingDirectory)/$buildNumber).zip'
     artifactName: 'drop'
     publishLocation: 'Container'
   displayName: 'Publish Build'
