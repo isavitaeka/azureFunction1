@@ -1,3 +1,13 @@
+name: $(Build.DefinitionName)_$(Year:yyyy).$(Month).$(DayOfMonth)$(Rev:.r)
+
+name: $(Build.DefinitionName)_$(Build.BuildId)_$(Build.SourceBranchName)_$(versionMajor).$(versionMinor).$(versionPatch)$(Rev:.rrr)
+
+variables:
+  buildConfiguration: 'AzureFunction'
+  versionMajor: 1
+  versionMinor: 0
+  versionPatch: 0
+
 trigger:
 - main
 
