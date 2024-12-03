@@ -6,7 +6,7 @@ user = "savita"
 password = "fqX5VFRG7VF9LJ0TgvWMGPGyNwLJQmNVrT3qiNks1iZSjJdbMVFJvnOVYLqw1C76xtdi7eS6gdvfACDbStHCVg!"
 @app.route(route="GetDetails")
 def GetDetails(req: func.HttpRequest) -> func.HttpResponse:
-    logging.info('Python HTTP trigger function processed a request.')
+    logging.info('Python HTTP trigger function processed a incoming request.')
 
     name = req.params.get('name')
     job = req.params.get('job')
